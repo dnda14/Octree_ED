@@ -46,7 +46,7 @@ class CubeApp(ShowBase):
     def draw_esfera(self, posicion):
         """Dibuja una esfera en la posición dada."""
         sphere = self.loader.load_model("sphere3D/scene.gltf")
-        sphere.set_scale(0.05)  # Escalar la esfera
+        sphere.set_scale(0.02)  # Escalar la esfera
         sphere.set_pos(LVecBase3(*posicion))
         sphere.reparent_to(self.render)
         sphere.set_color(LColor(1, 1, 1, 0.1))  # Color azul para la esfera  
