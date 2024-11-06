@@ -113,51 +113,8 @@ class Octree:
         
         return False
 
-    def delete(self, x, y, z):
-        
-        if not (self.boundary_min.x <= x <= self.boundary_max.x and
-                self.boundary_min.y <= y <= self.boundary_max.y and
-                self.boundary_min.z <= z <= self.boundary_max.z):
-            return False  
-
-        
-        if not self.divided:
-            point_to_delete = Point(x, y, z)
-            if point_to_delete in self.points:  
-                print(f"Point found! Deleting {point_to_delete}")
-                self.points.remove(point_to_delete)  
-                print(self.points)
-                return True
-            print("Point not found in this node")
-            return False  
-
-        
-        for child in self.children:
-            if child:  
-                print(f"Checking child node")
-                if child.delete(x, y, z):  
-                    print("Point deleted in child node")
-                    
-                    self._try_merge_children()
-                    return True
-
-        return False  
-
-    def _try_merge_children(self):
-        
-        all_empty = True
-        for child in self.children:
-            if len(child.points) > 0 or child.divided:
-                all_empty = False
-                break
-
-        if all_empty:
-            self.points = []  
-            for child in self.children:
-                self.points.extend(child.points)  
-            self.children = [None] * 8  
-            self.divided = False  
     
+
 
 class OctreeApp(ShowBase):
     def __init__(self):
