@@ -331,7 +331,6 @@ class OctreeApp(ShowBase):
             
             self.visualize_octree()
 
-
     def visualize_octree(self, node=None):
         if node is None:
             node = self.octree
