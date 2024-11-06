@@ -1,0 +1,62 @@
+\documentclass{article}
+
+\title{Octree: Estructura de Datos para la Representación Espacial en Tres Dimensiones}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+
+\section{Origen}
+El \textit{octree} fue desarrollado como una extensión tridimensional del \textit{quadtree}, una estructura que divide el espacio bidimensional en cuatro cuadrantes iguales. El octree se originó de manera independiente a través del trabajo de varios investigadores que buscaban representar el espacio tridimensional de manera jerárquica y eficiente. 
+
+Entre los primeros en conceptualizar el octree se encuentran:
+\begin{itemize}
+    \item \textbf{Gary W. Hunter}: Hunter propuso el octree como una extensión natural del quadtree, adaptándolo al espacio tridimensional para gestionar datos espaciales y realizar búsquedas eficientes en tres dimensiones.
+    \item \textbf{Ramesh Jain y Sanjay G. Rubin}: Jain y Rubin utilizaron el octree en el contexto del modelado de sólidos y exploraron diferentes representaciones para objetos en tres dimensiones. Evaluaron el octree junto con otras estructuras de particionamiento y concluyeron que, aunque útil, preferían una variante del octree que facilitara la visualización y manipulación de sólidos complejos.
+    \item \textbf{David Meagher}: En los años 1980, Meagher desarrolló técnicas específicas para la representación de volúmenes mediante octrees. Su trabajo en el modelado sólido utilizando octrees resultó fundamental para aplicaciones en gráficos por computadora y visión artificial, donde la representación espacial eficiente es crítica.
+\end{itemize}
+
+\section{Definición}
+Un \textbf{octree} es una estructura de datos jerárquica que subdivide recursivamente el espacio tridimensional en ocho partes (octantes) iguales. Cada nodo en un octree representa una región cúbica del espacio, y los nodos se subdividen en octantes hasta que se cumple una condición de parada, como alcanzar una resolución deseada o contener un solo objeto.
+
+En el contexto de gráficos por computadora y modelado de sólidos, el octree es particularmente útil para representar objetos con dimensiones y posiciones variables dentro de un espacio tridimensional. La estructura jerárquica permite almacenar eficientemente la información espacial y realizar búsquedas rápidas, ya que solo los nodos relevantes se recorren durante las consultas espaciales.
+
+\section{Comparación con Otras Estructuras}
+El octree tiene ventajas y desventajas en comparación con otras estructuras de particionamiento espacial como el \textit{k-d tree} y el \textit{BSP tree}.
+
+\textbf{Ventajas:} 
+\begin{itemize}
+    \item \textbf{Eficiencia de Almacenamiento}: En aplicaciones donde los datos espaciales son dispersos, el octree permite subdividir el espacio solo donde es necesario, reduciendo el uso de memoria.
+    \item \textbf{Búsqueda Espacial Eficiente}: La estructura jerárquica del octree facilita consultas rápidas de proximidad, intersección y contención, ya que los nodos no relevantes pueden ignorarse durante la búsqueda.
+    \item \textbf{Adaptabilidad a Diferentes Escalas}: La capacidad de subdividir regiones específicas permite que el octree se adapte fácilmente a datos de diferentes niveles de detalle.
+\end{itemize}
+
+\textbf{Desventajas:}
+\begin{itemize}
+    \item \textbf{Complejidad Computacional}: La construcción y manipulación de octrees puede ser intensiva en términos de cómputo, especialmente en aplicaciones que requieren operaciones en tiempo real.
+    \item \textbf{Granularidad Limitada}: En casos de datos extremadamente detallados o en aplicaciones que requieren alta precisión, el octree puede necesitar subdivisiones excesivas, incrementando los costos de almacenamiento y procesamiento.
+\end{itemize}
+
+\textbf{Casos de Uso Comparativo:}
+\begin{itemize}
+    \item \textbf{k-d Tree}: El \textit{k-d tree} es más adecuado para búsquedas en espacios de baja dimensionalidad y es especialmente eficiente en consultas de punto exacto, pero es menos eficiente para modelar volúmenes y superficies.
+    \item \textbf{BSP Tree}: Los \textit{BSP trees} se utilizan comúnmente en aplicaciones de gráficos para descomponer escenas complejas. Aunque los BSP trees permiten una representación más flexible de los objetos, su construcción puede ser más complicada en comparación con el octree.
+\end{itemize}
+
+\section{Aplicaciones}
+Los octrees son ampliamente utilizados en:
+\begin{itemize}
+    \item \textbf{Modelado Geométrico de Sólidos}: El octree es ideal para representar sólidos en aplicaciones de CAD y gráficos por computadora. Su estructura permite una representación eficiente del volumen y facilita operaciones como intersección y unión de volúmenes.
+    \item \textbf{Visión Robótica y Planificación de Rutas}: Los octrees se utilizan en visión artificial y robótica para representar el entorno tridimensional. La estructura permite planificar rutas y detectar colisiones en aplicaciones que requieren la navegación en entornos complejos.
+    \item \textbf{Análisis de Elementos Finitos}: En ingeniería, los octrees ayudan a generar mallas tridimensionales para el análisis de sólidos mediante el método de elementos finitos, adaptando la resolución espacial a las necesidades específicas de la simulación.
+    \item \textbf{Representación de Objetos en Movimiento}: En aplicaciones que involucran datos espaciotemporales, el octree se extiende añadiendo una dimensión temporal, lo cual es útil para el seguimiento de objetos en movimiento.
+\end{itemize}
+\section{Implementacion}
+\subsection{Search}
+
+\subsection{Insert}
+\subsection{Delete}
+\end{document}
