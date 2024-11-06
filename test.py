@@ -11,7 +11,7 @@ class Point:
         self.z = z
     def __eq__(self, other):
         if isinstance(other, Point):
-            tolerance = 1e-6  # Small tolerance for floating-point comparison
+            tolerance = 1e-6  
             return (abs(self.x - other.x) < tolerance and
                     abs(self.y - other.y) < tolerance and
                     abs(self.z - other.z) < tolerance)
@@ -31,42 +31,42 @@ class Octree:
         midy = (self.boundary_min.y + self.boundary_max.y) / 2
         midz = (self.boundary_min.z + self.boundary_max.z) / 2
         boundaries = [
-            (self.boundary_min.x, self.boundary_min.y, self.boundary_min.z, midx, midy, midz),  # TopLeftFront
-            (midx, self.boundary_min.y, self.boundary_min.z, self.boundary_max.x, midy, midz),  # TopRightFront
-            (midx, midy, self.boundary_min.z, self.boundary_max.x, self.boundary_max.y, midz),  # BottomRightFront
-            (self.boundary_min.x, midy, self.boundary_min.z, midx, self.boundary_max.y, midz),  # BottomLeftFront
-            (self.boundary_min.x, self.boundary_min.y, midz, midx, midy, self.boundary_max.z),  # TopLeftBottom
-            (midx, self.boundary_min.y, midz, self.boundary_max.x, midy, self.boundary_max.z),  # TopRightBottom
-            (midx, midy, midz, self.boundary_max.x, self.boundary_max.y, self.boundary_max.z),  # BottomRightBack
-            (self.boundary_min.x, midy, midz, midx, self.boundary_max.y, self.boundary_max.z),  # BottomLeftBack
+            (self.boundary_min.x, self.boundary_min.y, self.boundary_min.z, midx, midy, midz),  
+            (midx, self.boundary_min.y, self.boundary_min.z, self.boundary_max.x, midy, midz),  
+            (midx, midy, self.boundary_min.z, self.boundary_max.x, self.boundary_max.y, midz),  
+            (self.boundary_min.x, midy, self.boundary_min.z, midx, self.boundary_max.y, midz),  
+            (self.boundary_min.x, self.boundary_min.y, midz, midx, midy, self.boundary_max.z),  
+            (midx, self.boundary_min.y, midz, self.boundary_max.x, midy, self.boundary_max.z),  
+            (midx, midy, midz, self.boundary_max.x, self.boundary_max.y, self.boundary_max.z),  
+            (self.boundary_min.x, midy, midz, midx, self.boundary_max.y, self.boundary_max.z),  
         ]
         for i in range(8):
             self.children[i] = Octree(*boundaries[i], self.capacity)
         self.divided = True
 
     def insert(self, x, y, z):
-        # Check if point is within the node's boundaries
+        
         if not (self.boundary_min.x <= x <= self.boundary_max.x and
                 self.boundary_min.y <= y <= self.boundary_max.y and
                 self.boundary_min.z <= z <= self.boundary_max.z):
             return False
 
-        # If this node is not divided and has capacity, just add the point
+        
         if not self.divided and len(self.points) < self.capacity:
             self.points.append(Point(x, y, z))
             return True
 
-        # Subdivide if capacity is reached and node is not already divided
+        
         if not self.divided:
             self.subdivide()
-            # Move points to children nodes after subdivision
+            
             for p in self.points:
                 for child in self.children:
                     if child.insert(p.x, p.y, p.z):
                         break
-            self.points = []  # Clear points in the current node as they are now in children
+            self.points = []  
 
-        # Insert new point into one of the children
+        
         for child in self.children:
             if child.insert(x, y, z):
                 return True
@@ -74,58 +74,58 @@ class Octree:
         return False
     
     def search(self, x, y, z):
-        # Check if point is within this node's boundaries
+        
         if not (self.boundary_min.x <= x <= self.boundary_max.x and
                 self.boundary_min.y <= y <= self.boundary_max.y and
                 self.boundary_min.z <= z <= self.boundary_max.z):
             return False
 
-        # Check if the point exists in this node's points
+        
         for point in self.points:
             if point.x == x and point.y == y and point.z == z:
                 return True
 
-        # If divided, recursively search in the children nodes
+        
         if self.divided:
             for child in self.children:
                 if child and child.search(x, y, z):
                     return True
 
-        # Point not found in this node or its children
+        
         return False
 
     def delete(self, x, y, z):
-        # Check if the point is within the boundaries of the current node
+        
         if not (self.boundary_min.x <= x <= self.boundary_max.x and
                 self.boundary_min.y <= y <= self.boundary_max.y and
                 self.boundary_min.z <= z <= self.boundary_max.z):
-            return False  # Point is outside this node's boundaries
+            return False  
 
-        # If not divided, check and remove the point from this node
+        
         if not self.divided:
             point_to_delete = Point(x, y, z)
-            if point_to_delete in self.points:  # Compare using __eq__ method
+            if point_to_delete in self.points:  
                 print(f"Point found! Deleting {point_to_delete}")
-                self.points.remove(point_to_delete)  # Remove the point
+                self.points.remove(point_to_delete)  
                 print(self.points)
                 return True
             print("Point not found in this node")
-            return False  # If point is not found in this node
+            return False  
 
-        # If the node is divided, check the children recursively
+        
         for child in self.children:
-            if child:  # If child exists
+            if child:  
                 print(f"Checking child node")
-                if child.delete(x, y, z):  # Try deleting from the child
+                if child.delete(x, y, z):  
                     print("Point deleted in child node")
-                    # After deletion, check if any child can be merged (optional)
+                    
                     self._try_merge_children()
                     return True
 
-        return False  # Return False if the point was not found in any child
+        return False  
 
     def _try_merge_children(self):
-        # Check if all children are empty, and if so, merge them back into this node
+        
         all_empty = True
         for child in self.children:
             if len(child.points) > 0 or child.divided:
@@ -133,11 +133,11 @@ class Octree:
                 break
 
         if all_empty:
-            self.points = []  # Merge the points from the children into this node
+            self.points = []  
             for child in self.children:
-                self.points.extend(child.points)  # This step ensures points are moved to the parent
-            self.children = [None] * 8  # Remove all children
-            self.divided = False  # Set the node to undivided
+                self.points.extend(child.points)  
+            self.children = [None] * 8  
+            self.divided = False  
     
 
 class OctreeApp(ShowBase):
@@ -151,34 +151,34 @@ class OctreeApp(ShowBase):
         self.camera.set_pos(20, 30, 20)
         self.camera.look_at(0, 0, 0)
         
-        # Draw initial cube for octree boundary
+        
         self.draw_cube((-self.size / 2, -self.size / 2, -self.size / 2),
                        (self.size / 2, self.size / 2, self.size / 2))
 
-        # Draw XYZ axis lines
+        
         self.draw_axis_lines()
         
-        # Button to add random points
-        self.add_point_button = DirectButton(text="Add Random Point", scale=0.1, pos=(0, 0, -0.8),
+        
+        self.add_point_button = DirectButton(text="Punto random", scale=0.1, pos=(0, 0, -0.8),
                                              command=self.add_random_point)
-        # Button to add point manually
+        
         self.manual_point_button = DirectButton(text="Opera", scale=0.1, pos=(0, 0, -0.6),
                                                 command=self.open_input_dialog)
     def draw_axis_lines(self):
         axis_line_segs = LineSegs()
         axis_line_segs.set_thickness(2)
 
-        # X-rojo
+        
         axis_line_segs.set_color(LColor(1, 0, 0, 1))
         axis_line_segs.move_to(-self.size, 0, 0)
         axis_line_segs.draw_to(self.size, 0, 0)
 
-        # Y-verde
+        
         axis_line_segs.set_color(LColor(0, 1, 0, 1))
         axis_line_segs.move_to(0, -self.size, 0)
         axis_line_segs.draw_to(0, self.size, 0)
 
-        # Z-azul
+        
         axis_line_segs.set_color(LColor(0, 0, 1, 1))
         axis_line_segs.move_to(0, 0, -self.size)
         axis_line_segs.draw_to(0, 0, self.size)
@@ -188,11 +188,11 @@ class OctreeApp(ShowBase):
         
     def open_input_dialog(self):
         
-        # Create dialog for manual point input
+        
         self.dialog = DirectDialog(frameSize=(-0.6, 0.6, -0.6, 0.6), fadeScreen=0.5, relief=1)
         self.dialog.setTransparency(True)
         
-        # Input fields for X, Y, and Z coordinates
+        
         self.x_entry = DirectEntry(parent=self.dialog, scale=0.1, pos=(-0.4, 0, 0.1), width=5,
                                    text_align=TextNode.ACenter, initialText="X", numLines=1, focus=1)
         self.y_entry = DirectEntry(parent=self.dialog, scale=0.1, pos=(0, 0, 0.1), width=5,
@@ -200,17 +200,17 @@ class OctreeApp(ShowBase):
         self.z_entry = DirectEntry(parent=self.dialog, scale=0.1, pos=(0.4, 0, 0.1), width=5,
                                    text_align=TextNode.ACenter, initialText="Z", numLines=1)
         
-        # Confirm button to add point
+        
         confirm_button = DirectButton(parent=self.dialog, text="Add Point", scale=0.07, pos=(0, 0, -0.1),
                                       command=self.add_manual_point)
-        # Search button to find point by coordinates
+        
         search_button = DirectButton(parent=self.dialog, text="Search Point", scale=0.07, pos=(0, 0, -0.3),
                                     command=self.search_point)
         
-        #delete_button = DirectButton(parent=self.dialog, text="Delete Point", scale=0.07, pos=(0, 0, -0.5),
-                                    #command=self.delete_point)
+        
+                                    
     def add_manual_point(self):
-        # Get values from input fields
+        
         try:
             x = float(self.x_entry.get())
             y = float(self.y_entry.get())
@@ -219,23 +219,23 @@ class OctreeApp(ShowBase):
             print("Please enter valid numbers for X, Y, and Z.")
             return
         
-        # Close the dialog
+        
         self.dialog.hide()
         
-        # Insert the manually entered point
+        
         if self.octree.insert(x, y, z):
             print(f"Inserted manual point at ({x:.2f}, {y:.2f}, {z:.2f})")
-            #self.draw_sphere((x, y, z), color=(0, 1, 0, 1))  # Green for manually added points
+            
 
             for node in self.render.get_children():
                 if node.has_tag("octree"):
                     node.remove_node()
-            sphere = self.draw_sphere((x, y, z))  # Assuming this method creates and returns a sphere
+            sphere = self.draw_sphere((x, y, z))  
             sphere_dict[(x, y, z)] = sphere
             self.visualize_octree()
             
     def search_point(self):
-        # Implementation for searching the point
+        
         try:
             x = float(self.x_entry.get())
             y = float(self.y_entry.get())
@@ -244,17 +244,17 @@ class OctreeApp(ShowBase):
             print("Please enter valid numbers for X, Y, and Z.")
             return
         
-        # Close the dialog
+        
         self.dialog.hide()
-        # Logic for searching the point (e.g., check if the point exists in a structure)
-        found = self.octree.search(x, y, z)  # Assume find_point is a method you define
+        
+        found = self.octree.search(x, y, z)  
         if found:
             print(f"Point ({x}, {y}, {z}) found!")
         else:
             print(f"Point ({x}, {y}, {z}) not found.")
     
     def delete_point(self):
-        # Get values from input fields for deletion
+        
         try:
             x = float(self.x_entry.get())
             y = float(self.y_entry.get())
@@ -263,22 +263,22 @@ class OctreeApp(ShowBase):
             print("Please enter valid numbers for X, Y, and Z.")
             return
 
-        # Close the dialog
+        
         self.dialog.hide()
 
-        # Logic for deleting the point (e.g., remove the point from the octree)
-        deleted = self.octree.delete(x, y, z)  # Assume delete method is implemented in Octree
+        
+        deleted = self.octree.delete(x, y, z)  
         if deleted:
             
             if (x, y, z) in sphere_dict:
-                sphere = sphere_dict.pop((x, y, z))  # Get and remove the sphere
+                sphere = sphere_dict.pop((x, y, z))  
                 sphere.remove_node()
             print(f"Deleted point ({x}, {y}, {z})")
             for node in self.render.get_children():
                 if node.has_tag("octree"):
                     node.remove_node()
             print("hola")
-            # Recursively visualize the octree after deletion
+            
             
             self.visualize_octree()
         else:
@@ -305,7 +305,7 @@ class OctreeApp(ShowBase):
 
         cube_np = self.render.attach_new_node(line_segs.create())
         cube_np.set_transparency(True)
-        cube_np.set_tag("octree", "true")  # Tag the cube for easier removal
+        cube_np.set_tag("octree", "true")  
 
     def draw_sphere(self, position, color=(1, 1, 1, 1)):
         sphere = self.loader.load_model("models/misc/sphere")
@@ -321,14 +321,14 @@ class OctreeApp(ShowBase):
         z = random.uniform(-self.size / 2, self.size / 2)
         if self.octree.insert(x, y, z):
             print(f"Inserted point at ({x:.2f}, {y:.2f}, {z:.2f})")
-            #self.draw_sphere((x, y, z), color=(1, 0, 0, 1))  # Red for points
+            
 
-            # Clear previous visualizations of subdivisions
+            
             for node in self.render.get_children():
                 if node.has_tag("octree"):
                     node.remove_node()
 
-            # Recursively visualize the octree after insertion
+            
             self.visualize_octree()
 
 
