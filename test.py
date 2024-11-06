@@ -339,6 +339,8 @@ class OctreeApp(ShowBase):
             self.draw_cube((node.boundary_min.x, node.boundary_min.y, node.boundary_min.z),
                            (node.boundary_max.x, node.boundary_max.y, node.boundary_max.z))
             print(node.points)
+            for point in node.points:
+                self.draw_sphere((point.x, point.y, point.z))
         else:
             for child in node.children:
                 self.visualize_octree(child)
