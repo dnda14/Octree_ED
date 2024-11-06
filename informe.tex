@@ -61,10 +61,12 @@ Los octrees son ampliamente utilizados en:
     \item \textbf{Verificación de Límites:} Primero, se verifica si el punto está dentro de los límites del nodo actual.\text{Si el punto está fuera de los límites, se retorna \texttt{False}.}
     
     
-    \item \textbf{Búsqueda en los Puntos del Nodo:} Si el punto está dentro de los límites, se busca directamente en la lista de puntos del nodo.\text{Si el punto se encuentra en la lista de puntos, se retorna \texttt{True}.}
+    \item \textbf{Búsqueda en los Puntos del Nodo:} Si el punto está dentro de los límites, se busca directamente en la lista de puntos del nodo.\\
+    \text{Si el punto se encuentra en la lista de puntos, se retorna \texttt{True}.}
     
     
-    \item \textbf{Búsqueda Recursiva en los Nodos Hijos:} Si el nodo está dividido (es decir, tiene hijos), se busca recursivamente en cada hijo.\text{Si el punto es encontrado en algún hijo, se retorna \texttt{True}.}
+    \item \textbf{Búsqueda Recursiva en los Nodos Hijos:} Si el nodo está dividido (es decir, tiene hijos), se busca recursivamente en cada hijo.\\
+    \text{Si el punto es encontrado en algún hijo, se retorna \texttt{True}.}
     
     
     \item \textbf{Retorno de Resultados:} Si el punto es encontrado en el nodo o en alguno de los hijos, se retorna \texttt{True}. Si no se encuentra, se retorna \texttt{False}.

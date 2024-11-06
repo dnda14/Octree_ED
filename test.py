@@ -207,8 +207,8 @@ class OctreeApp(ShowBase):
         search_button = DirectButton(parent=self.dialog, text="Search Point", scale=0.07, pos=(0, 0, -0.3),
                                     command=self.search_point)
         
-        delete_button = DirectButton(parent=self.dialog, text="Delete Point", scale=0.07, pos=(0, 0, -0.5),
-                                    command=self.delete_point)
+        #delete_button = DirectButton(parent=self.dialog, text="Delete Point", scale=0.07, pos=(0, 0, -0.5),
+                                    #command=self.delete_point)
     def add_manual_point(self):
         # Get values from input fields
         try:
