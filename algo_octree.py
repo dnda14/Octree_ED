@@ -1,7 +1,7 @@
 
 from direct.showbase.ShowBase import ShowBase
 from panda3d.core import LVecBase3, LColor, LineSegs, TextNode
-from direct.gui.DirectGui import DirectButton  # Importa DirectButton para crear el botón
+from direct.gui.DirectGui import DirectButton  
 
 class Octree:
     def __init__(self, boundary, capacidad, level=0):
@@ -10,7 +10,7 @@ class Octree:
         :param boundary: un cubo que define los límites del octree (xmin, ymin, zmin, xmax, ymax, zmax)
         :param capacidad: número máximo de puntos que el cubo puede contener antes de dividirse
         """
-        self.boundary = boundary  # (xmin, ymin, zmin, xmax, ymax, zmax)
+        self.boundary = boundary  
         self.capacidad = capacidad
         self.puntos = []
         self.divided = False
@@ -21,10 +21,10 @@ class Octree:
         Visualiza el cubo actual y sus subcubos si están divididos.
         :param render: gestiona todos los elementos de la escena 
         """
-        # Graficar el cubo actual
+        
         self.draw_cube(self.boundary, render)
         
-        # Si está dividido, graficar los subcubos
+        
         if self.divided:
             for subtree in self.subtrees:
                 subtree.visualizar(render)
@@ -33,12 +33,12 @@ class Octree:
         """Dibuja el cubo a partir de sus límites."""
         xmin, ymin, zmin, xmax, ymax, zmax = boundary
 
-        # Crear líneas para las aristas del cubo
+        
         line_segs = LineSegs()
         line_segs.set_thickness(2)
-        line_segs.set_color(LColor(1, 1, 0, 1))  # Color de las aristas (amarillo)
+        line_segs.set_color(LColor(1, 1, 0, 1))  
 
-        # Coordenadas para las 8 esquinas del cubo
+        
         vertices = [
             (xmin, ymin, zmin), (xmax, ymin, zmin),
             (xmax, ymax, zmin), (xmin, ymax, zmin),
@@ -46,23 +46,23 @@ class Octree:
             (xmax, ymax, zmax), (xmin, ymax, zmax)
         ]   
 
-        # Definir las aristas del cubo usando los índices de las esquinas
+        
         edges = [
-            (0, 1), (1, 2), (2, 3), (3, 0),  # Cara inferior
-            (4, 5), (5, 6), (6, 7), (7, 4),  # Cara superior
-            (0, 4), (1, 5), (2, 6), (3, 7)   # Conexiones verticales
+            (0, 1), (1, 2), (2, 3), (3, 0),  
+            (4, 5), (5, 6), (6, 7), (7, 4),  
+            (0, 4), (1, 5), (2, 6), (3, 7)   
         ]
 
-        # Crear cada arista en el LineSegs
+        
         for edge in edges:
             start, end = edge
             line_segs.move_to(vertices[start])
             line_segs.draw_to(vertices[end])
 
-        # Convertir LineSegs a NodePath y adjuntarlo a render
+        
         wireframe = line_segs.create()
         wireframe_node = render.attach_new_node(wireframe)
-        wireframe_node.set_pos(0, 0, 0)  # Posición base, se ajustará más tarde
+        wireframe_node.set_pos(0, 0, 0)  
 
     def insert(self, point):
         """
@@ -75,7 +75,7 @@ class Octree:
 
         if len(self.puntos) < self.capacidad:
             self.puntos.append(point)
-            #self.mostrar_arbol()
+            
             print("punyo agrgado")
             self.imprimir_nodos_compacto()
             return True
@@ -104,7 +104,7 @@ class Octree:
         ymid = (ymin + ymax) / 2
         zmid = (zmin + zmax) / 2
 
-        # Crear 8 subcubos
+        
         self.subtrees.append(Octree((xmin, ymin, zmin, xmid, ymid, zmid), self.capacidad))
         self.subtrees.append(Octree((xmid, ymin, zmin, xmax, ymid, zmid), self.capacidad))
         self.subtrees.append(Octree((xmin, ymid, zmin, xmid, ymax, zmid), self.capacidad))
@@ -121,7 +121,7 @@ class Octree:
                     subtree.insert(point)
                     break
 
-        # Limpiar los puntos en el nodo actual, ya que ahora se han trasladado a los subcubos
+        
         self.puntos = []
         
     def imprimir_nodos_compacto(self, level=0):
@@ -129,17 +129,17 @@ class Octree:
         Imprime una descripción compacta de cada nodo en el octree y los puntos que contiene.
         Muestra el nivel de profundidad, el número de puntos y sus coordenadas.
         """
-        indent = ' ' * (level * 4)  # Cuatro espacios de indentación por nivel
+        indent = ' ' * (level * 4)  
         xmin, ymin, zmin, xmax, ymax, zmax = self.boundary
         
-        # Información breve del nodo actual
+        
         print(f"{indent}Nivel {level}: {len(self.puntos)} puntos en ({xmin}, {ymin}, {zmin}) a ({xmax}, {ymax}, {zmax})")
         
-        # Lista compacta de puntos
+        
         if self.puntos:
             print(f"{indent}Puntos: {', '.join(map(str, self.puntos))}")
         
-        # Llamada recursiva para los subnodos si está dividido
+        
         if self.divided:
             for subtree in self.subtrees:
                 subtree.imprimir_nodos_compacto(level + 1)

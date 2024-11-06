@@ -4,14 +4,14 @@ from tkinter import Tk, Frame, Button, Canvas
 from direct.showbase.ShowBase import ShowBase
 from panda3d.core import TextNode, NodePath
 
-# Clase para el nodo del árbol binario
+
 class TreeNode:
     def __init__(self, value):
         self.value = value
         self.left = None
         self.right = None
 
-# Clase para el árbol binario de búsqueda
+
 class BinarySearchTree:
     def __init__(self):
         self.root = None
@@ -34,13 +34,13 @@ class BinarySearchTree:
             else:
                 self._insert_rec(node.right, value)
 
-# Función para dibujar el árbol en el lienzo de Tkinter
+
 def draw_tree(canvas, node, x, y, dx, scale_factor, buttons):
     if node is not None:
-        # Crear y almacenar el botón correspondiente al nodo
+        
         button = Button(canvas, text=str(node.value), command=lambda: panda_app.change_cube_color(node.value))
         button.place(x=x- 20, y=y * scale_factor , width=40 * scale_factor, height=40 * scale_factor)
-        buttons.append(button)  # Almacenar el botón para poder eliminarlo después
+        buttons.append(button)  
 
         if node.left:
             canvas.create_line(x+ 0.0005 * scale_factor, (y +40)* scale_factor, 
@@ -52,35 +52,35 @@ def draw_tree(canvas, node, x, y, dx, scale_factor, buttons):
                                (x + dx) , (y + 80) * scale_factor)
             draw_tree(canvas, node.right, x + dx, y + 80, dx // 2, scale_factor, buttons)
 
-# Clase para la aplicación Panda3D
+
 class MyApp(ShowBase):
     def __init__(self):
         ShowBase.__init__(self)
-        self.cubes = []  # Lista para almacenar los cubos
+        self.cubes = []  
 
     def create_cube(self, number):
         """Crea un cubo en Panda3D con el número en cada cara."""
         cube = self.loader.loadModel("models/box")
         cube.setScale(1, 1, 1)
-        cube.setPos(len(self.cubes), 0, 0)  # Ajustar la posición según el índice
+        cube.setPos(len(self.cubes), 0, 0)  
         cube.reparentTo(self.render)
 
-        # Añadir texto a cada cara del cubo
+        
         self.add_text_to_cube(cube, number)
 
-        self.cubes.append(cube)  # Añadir el cubo a la lista de cubos
+        self.cubes.append(cube)  
 
     def add_text_to_cube(self, cube, number):
         """Añadir texto a cada cara del cubo."""
         for i in range(6):
             text_node = TextNode(f"TextNode-{i}")
             text_node.setText(str(number))
-            text_node.setTextColor(1, 1, 1, 1)  # Color blanco
+            text_node.setTextColor(1, 1, 1, 1)  
 
             text_node_path = NodePath(text_node)
-            text_node_path.setScale(0.1)  # Ajustar el tamaño del texto
+            text_node_path.setScale(0.1)  
 
-            # Colocar el texto en la cara correspondiente del cubo
+            
             if i == 0:
                 text_node_path.setPos(0, 1, 0)
             elif i == 1:
@@ -106,35 +106,35 @@ class MyApp(ShowBase):
             new_color = (random.random(), random.random(), random.random(), 1) if current_color[0] == 1 else (1, 1, 1, 1)
             cube.setColor(new_color)
 
-# Crear una ventana de Tkinter
+
 def create_tkinter_window(panda_app):
     bst = BinarySearchTree()
-    scale_factor = 1.0  # Factor de escala inicial
-    buttons = []  # Lista para almacenar referencias a los botones
+    scale_factor = 1.0  
+    buttons = []  
 
     def generate_random_number():
         number = random.randint(1, 100)
-        bst.insert(number)  # Insertar en el árbol binario
-        update_tree_display()  # Actualizar visualización del árbol
-        panda_app.create_cube(number)  # Crear un cubo en Panda3D
+        bst.insert(number)  
+        update_tree_display()  
+        panda_app.create_cube(number)  
 
     def update_tree_display():
-        # Limpiar el lienzo y eliminar los botones anteriores
+        
         canvas.delete("all")
         for button in buttons:
-            button.destroy()  # Destruir cada botón
-        buttons.clear()  # Vaciar la lista de botones
+            button.destroy()  
+        buttons.clear()  
 
-        # Dibujar el árbol escalado y almacenar los nuevos botones
+        
         draw_tree(canvas, bst.root, 800, 40, 300, scale_factor, buttons)
 
     def zoom(event):
         nonlocal scale_factor
-        if event.delta > 0:  # Zoom in
+        if event.delta > 0:  
             scale_factor *= 1.1
-        else:  # Zoom out
+        else:  
             scale_factor /= 1.1
-        update_tree_display()  # Redibujar árbol con nuevo factor de escala
+        update_tree_display()  
 
     root = Tk()
     root.geometry("1600x400")
@@ -146,7 +146,7 @@ def create_tkinter_window(panda_app):
     canvas = Canvas(frame, bg="white")
     canvas.pack(fill='both', expand=True)
 
-    canvas.bind("<MouseWheel>", zoom)  # Asociar el zoom con la rueda del ratón
+    canvas.bind("<MouseWheel>", zoom)  
 
     button = Button(frame, text="Generate Random Number", command=generate_random_number)
     button.pack(pady=10)
