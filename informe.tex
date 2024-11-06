@@ -1,7 +1,8 @@
 \documentclass{article}
-
+\usepackage{amsmath}
 \title{Octree: Estructura de Datos para la Representación Espacial en Tres Dimensiones}
-\author{}
+\author{Himan Burgos Sebastian, Huayhua Carlos Lenin,\\ Malcoaccha Diaz Erick, Mamani Casilla Wilson,\\
+Lizarve Mamani Johan }
 \date{}
 
 \begin{document}
@@ -52,11 +53,60 @@ Los octrees son ampliamente utilizados en:
     \item \textbf{Modelado Geométrico de Sólidos}: El octree es ideal para representar sólidos en aplicaciones de CAD y gráficos por computadora. Su estructura permite una representación eficiente del volumen y facilita operaciones como intersección y unión de volúmenes.
     \item \textbf{Visión Robótica y Planificación de Rutas}: Los octrees se utilizan en visión artificial y robótica para representar el entorno tridimensional. La estructura permite planificar rutas y detectar colisiones en aplicaciones que requieren la navegación en entornos complejos.
     \item \textbf{Análisis de Elementos Finitos}: En ingeniería, los octrees ayudan a generar mallas tridimensionales para el análisis de sólidos mediante el método de elementos finitos, adaptando la resolución espacial a las necesidades específicas de la simulación.
-    \item \textbf{Representación de Objetos en Movimiento}: En aplicaciones que involucran datos espaciotemporales, el octree se extiende añadiendo una dimensión temporal, lo cual es útil para el seguimiento de objetos en movimiento.
+    \item \textbf{Representación de Objetos en Movimiento}: En aplicaciones que involucran datos espacio temporales, el octree se extiende añadiendo una dimensión temporal, lo cual es útil para el seguimiento de objetos en movimiento.
 \end{itemize}
 \section{Implementacion}
 \subsection{Search}
-
+\begin{enumerate}
+    \item \textbf{Verificación de Límites:} Primero, se verifica si el punto está dentro de los límites del nodo actual.\text{Si el punto está fuera de los límites, se retorna \texttt{False}.}
+    
+    
+    \item \textbf{Búsqueda en los Puntos del Nodo:} Si el punto está dentro de los límites, se busca directamente en la lista de puntos del nodo.\text{Si el punto se encuentra en la lista de puntos, se retorna \texttt{True}.}
+    
+    
+    \item \textbf{Búsqueda Recursiva en los Nodos Hijos:} Si el nodo está dividido (es decir, tiene hijos), se busca recursivamente en cada hijo.\text{Si el punto es encontrado en algún hijo, se retorna \texttt{True}.}
+    
+    
+    \item \textbf{Retorno de Resultados:} Si el punto es encontrado en el nodo o en alguno de los hijos, se retorna \texttt{True}. Si no se encuentra, se retorna \texttt{False}.
+    
+\end{enumerate}
 \subsection{Insert}
+
 \subsection{Delete}
+La eliminación consiste en buscar el nodo que contiene el punto y eliminarlo de manera adecuada, manteniendo la estructura del árbol.
+
+La eliminación en un \textit{point octree} tiene tres casos principales, además de algunos subcasos y condiciones especiales para mantener la estructura del árbol.
+
+\subsection*{Caso 1: El punto a eliminar es una hoja sin hijos}
+Si el nodo que contiene el punto no tiene hijos (es una hoja), se puede eliminar directamente. Este es el caso más sencillo: se libera la memoria de ese nodo y se ajustan los punteros del padre.
+
+\subsection*{Caso 2: El punto a eliminar está en un nodo intermedio con hijos}
+Si el nodo tiene otros hijos además del punto a eliminar, la eliminación se vuelve más compleja. Primero, se debe eliminar el punto en cuestión, y luego decidir si se debe \textbf{colapsar el nodo} (es decir, volverlo una hoja) o \textbf{reorganizar sus hijos}.
+
+Para simplificar este proceso, en algunos diseños de octree se \textbf{transfiere el último punto de uno de los nodos hijo} a la posición del punto eliminado y luego se elimina ese nodo hijo vacío. Sin embargo, hay que tener cuidado, ya que transferir puntos puede desbalancear el árbol, especialmente si el octree está balanceado.
+
+\subsection*{Caso 3: El punto a eliminar es el único punto en un subárbol}
+Si el punto a eliminar es el único punto en su subárbol, entonces se puede eliminar todo ese subárbol. Esto significa que todos los nodos de ese subárbol (hasta el nodo padre común) deben ser eliminados.
+
+\subsubsection{Condiciones Especiales}
+\begin{itemize}
+    \item \textbf{Reequilibrado del árbol}: Si eliminamos puntos en niveles inferiores, es posible que el árbol se vuelva disparejo o contenga nodos vacíos sin ningún punto en ellos. Dependiendo de la implementación, es posible que se necesite reequilibrar o "podar" el árbol, eliminando nodos vacíos.
+    \item \textbf{Colapsado de nodos}: Después de una eliminación, si un nodo padre tiene solo un hijo, algunas implementaciones del octree optan por colapsar ese nodo y su único hijo en uno solo.
+    \item \textbf{Control de límites de nodo}: Cada punto eliminado puede modificar la forma de subdivisión del espacio; hay que tener cuidado de no afectar la partición espacial.
+\end{itemize}
+
+\subsubsection{Algoritmo General para la Eliminación}
+A continuación, un esquema paso a paso del proceso de eliminación:
+
+\begin{enumerate}
+    \item \textbf{Búsqueda del Nodo}: Se inicia desde la raíz y se desciende en el octree buscando el punto a eliminar. En cada nodo, se decide en cuál de los octantes debería estar el punto basándose en las coordenadas del punto respecto al nodo actual.
+    \item \textbf{Verificación de Existencia}: Si llegas a un nodo vacío en la ruta de búsqueda, el punto no está en el árbol, y la operación termina. Si encuentras el punto, se procede a eliminarlo.
+    \item \textbf{Eliminación del Punto}: 
+    \begin{itemize}
+        \item Si el nodo que contiene el punto no tiene hijos, elimínalo (Caso 1).
+        \item Si el nodo tiene hijos, elimina el punto y reorganiza los hijos o transfiere un punto de un hijo para ocupar el lugar del punto eliminado (Caso 2).
+        \item Si el nodo es el único punto en su subárbol, puedes eliminar todo el subárbol (Caso 3).
+    \end{itemize}
+    \item \textbf{Reestructuración Opcional del Árbol}: Opcionalmente, verifica si el nodo padre y sus ancestros necesitan ser colapsados o reorganizados para mantener el octree en un estado equilibrado.
+\end{enumerate}
 \end{document}

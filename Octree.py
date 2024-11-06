@@ -30,7 +30,7 @@ class CubeApp(ShowBase):
 
         self.add_point_button = DirectButton(text="Agregar Punto", scale=0.1, pos=(0, 0, -0.8),
                                              command=self.insertar_random)
-        
+        self.draw_axes()
     def insertar_random(self): 
         """Agrega un punto aleatorio al octree."""
         point = (random.uniform(-self.tam_cubo / 2, self.tam_cubo / 2),
@@ -39,7 +39,7 @@ class CubeApp(ShowBase):
         if self.octree.insert(point):
             print(f"Punto {point} agregado al octree.")
             self.draw_esfera(point)
-            self.octree.visualize(self.render)
+            self.octree.visualizar(self.render)
         else:
             print(f"Punto {point} fuera de los límites del octree.")
         
@@ -93,7 +93,34 @@ class CubeApp(ShowBase):
         #wireframe_node.set_pos(x, y, z)
 
         return cube
+    def draw_axes(self):
+        """Dibuja los ejes X, Y y Z con diferentes colores."""
+        line_segs = LineSegs()
 
+        # Definir las coordenadas para los ejes
+        origin = (0, 0, 0)
+        x_axis_end = (1, 0, 0)
+        y_axis_end = (0, 1, 0)
+        z_axis_end = (0, 0, 1)
+
+        # Dibujar los ejes X, Y y Z
+        line_segs.set_color(LColor(1, 0, 0, 1))  # Rojo para el eje X
+        line_segs.move_to(origin)
+        line_segs.draw_to(x_axis_end)
+
+        line_segs.set_color(LColor(0, 1, 0, 1))  # Verde para el eje Y
+        line_segs.move_to(origin)
+        line_segs.draw_to(y_axis_end)
+
+        line_segs.set_color(LColor(0, 0, 1, 1))  # Azul para el eje Z
+        line_segs.move_to(origin)
+        line_segs.draw_to(z_axis_end)
+
+        # Convertir LineSegs a NodePath y adjuntarlo a render
+        axes = line_segs.create()
+        axes_node = self.render.attach_new_node(axes)
+        
+        
     def change_cube_color(self):
         """Cambia el color del cubo transparente a verde."""
         if self.c_color ==1:

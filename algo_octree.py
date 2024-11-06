@@ -16,20 +16,22 @@ class Octree:
         self.divided = False
         self.subtrees = []          
 
-    def visualize(self, render):
-        """Visualiza el cubo actual y sus subcubos si están divididos."""
+    def visualizar(self, render):
+        """
+        Visualiza el cubo actual y sus subcubos si están divididos.
+        :param render: gestiona todos los elementos de la escena 
+        """
         # Graficar el cubo actual
         self.draw_cube(self.boundary, render)
         
         # Si está dividido, graficar los subcubos
         if self.divided:
             for subtree in self.subtrees:
-                subtree.visualize(render)
+                subtree.visualizar(render)
                 
     def draw_cube(self, boundary, render):
         """Dibuja el cubo a partir de sus límites."""
         xmin, ymin, zmin, xmax, ymax, zmax = boundary
-        size = max(xmax - xmin, ymax - ymin, zmax - zmin)
 
         # Crear líneas para las aristas del cubo
         line_segs = LineSegs()
