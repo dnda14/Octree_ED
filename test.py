@@ -3,7 +3,7 @@ from panda3d.core import LVecBase3, LColor, LineSegs, TextNode
 from direct.gui.DirectGui import DirectButton, DirectEntry, DirectDialog
 import random
 
-
+sphere_dict = {}
 class Point:
     def __init__(self, x=-1, y=-1, z=-1):
         self.x = x
@@ -25,7 +25,7 @@ class Octree:
         self.points = []
         self.children = [None] * 8
         self.divided = False
-
+        
     def subdivide(self):
         midx = (self.boundary_min.x + self.boundary_max.x) / 2
         midy = (self.boundary_min.y + self.boundary_max.y) / 2
@@ -107,6 +107,7 @@ class Octree:
             if point_to_delete in self.points:  # Compare using __eq__ method
                 print(f"Point found! Deleting {point_to_delete}")
                 self.points.remove(point_to_delete)  # Remove the point
+                print(self.points)
                 return True
             print("Point not found in this node")
             return False  # If point is not found in this node
@@ -132,36 +133,24 @@ class Octree:
                 break
 
         if all_empty:
+            self.points = []  # Merge the points from the children into this node
+            for child in self.children:
+                self.points.extend(child.points)  # This step ensures points are moved to the parent
             self.children = [None] * 8  # Remove all children
             self.divided = False  # Set the node to undivided
-
-    def find_point(self, x, y, z):
-        # Search for the point recursively
-        if not (self.boundary_min.x <= x <= self.boundary_max.x and
-                self.boundary_min.y <= y <= self.boundary_max.y and
-                self.boundary_min.z <= z <= self.boundary_max.z):
-            return False
-
-        if not self.divided:
-            return Point(x, y, z) in self.points
-
-        for child in self.children:
-            if child.find_point(x, y, z):
-                return True
-        return False
     
 
 class OctreeApp(ShowBase):
     def __init__(self):
         super().__init__()
-        self.capacity = 2
+        self.capacity = 1
         self.size = 10
         self.octree = Octree(-self.size / 2, -self.size / 2, -self.size / 2,
                              self.size / 2, self.size / 2, self.size / 2, self.capacity)
 
         self.camera.set_pos(20, 30, 20)
         self.camera.look_at(0, 0, 0)
-
+        
         # Draw initial cube for octree boundary
         self.draw_cube((-self.size / 2, -self.size / 2, -self.size / 2),
                        (self.size / 2, self.size / 2, self.size / 2))
@@ -236,12 +225,13 @@ class OctreeApp(ShowBase):
         # Insert the manually entered point
         if self.octree.insert(x, y, z):
             print(f"Inserted manual point at ({x:.2f}, {y:.2f}, {z:.2f})")
-            self.draw_sphere((x, y, z), color=(0, 1, 0, 1))  # Green for manually added points
+            #self.draw_sphere((x, y, z), color=(0, 1, 0, 1))  # Green for manually added points
 
             for node in self.render.get_children():
                 if node.has_tag("octree"):
                     node.remove_node()
-
+            sphere = self.draw_sphere((x, y, z))  # Assuming this method creates and returns a sphere
+            sphere_dict[(x, y, z)] = sphere
             self.visualize_octree()
             
     def search_point(self):
@@ -279,12 +269,17 @@ class OctreeApp(ShowBase):
         # Logic for deleting the point (e.g., remove the point from the octree)
         deleted = self.octree.delete(x, y, z)  # Assume delete method is implemented in Octree
         if deleted:
+            
+            if (x, y, z) in sphere_dict:
+                sphere = sphere_dict.pop((x, y, z))  # Get and remove the sphere
+                sphere.remove_node()
             print(f"Deleted point ({x}, {y}, {z})")
             for node in self.render.get_children():
                 if node.has_tag("octree"):
                     node.remove_node()
             print("hola")
             # Recursively visualize the octree after deletion
+            
             self.visualize_octree()
         else:
             print(f"Point ({x}, {y}, {z}) not found for deletion.")
@@ -318,6 +313,7 @@ class OctreeApp(ShowBase):
         sphere.set_pos(*position)
         sphere.set_color(LColor(*color))
         sphere.reparent_to(self.render)
+        return sphere
 
     def add_random_point(self):
         x = random.uniform(-self.size / 2, self.size / 2)
@@ -325,7 +321,7 @@ class OctreeApp(ShowBase):
         z = random.uniform(-self.size / 2, self.size / 2)
         if self.octree.insert(x, y, z):
             print(f"Inserted point at ({x:.2f}, {y:.2f}, {z:.2f})")
-            self.draw_sphere((x, y, z), color=(1, 0, 0, 1))  # Red for points
+            #self.draw_sphere((x, y, z), color=(1, 0, 0, 1))  # Red for points
 
             # Clear previous visualizations of subdivisions
             for node in self.render.get_children():
@@ -342,6 +338,7 @@ class OctreeApp(ShowBase):
         if not node.divided:
             self.draw_cube((node.boundary_min.x, node.boundary_min.y, node.boundary_min.z),
                            (node.boundary_max.x, node.boundary_max.y, node.boundary_max.z))
+            print(node.points)
         else:
             for child in node.children:
                 self.visualize_octree(child)
