@@ -72,6 +72,25 @@ Los octrees son ampliamente utilizados en:
     \item \textbf{Retorno de Resultados:} Si el punto es encontrado en el nodo o en alguno de los hijos, se retorna \texttt{True}. Si no se encuentra, se retorna \texttt{False}.
     
 \end{enumerate}
+La complejidad del algoritmo de búsqueda depende de la estructura del árbol y la distribución de los puntos. En términos generales, tenemos los siguientes casos:
+
+\begin{itemize}
+    \item \textbf{Caso Ideal:} Si el árbol está bien balanceado, la complejidad será \( O(\log n) \), donde \( n \) es el número total de puntos en el árbol.
+    
+    \item \textbf{Caso Peor:} Si los puntos no están distribuidos de manera eficiente, la búsqueda podría tener que recorrer todos los puntos, lo que resultaría en una complejidad de \( O(n) \), donde \( n \) es el número total de puntos.
+\end{itemize}
+
+Por lo tanto, la complejidad temporal en el peor caso es:
+
+\[
+T(n) = O(n)
+\]
+
+Y en el caso ideal (cuando el árbol está balanceado):
+
+\[
+T(n) = O(\log n)
+\]
 \subsection{Insert}
 A continuación, se presenta el algoritmo para insertar un punto \(P(x, y, z)\) en un octree. 
 
