@@ -45,33 +45,52 @@ class Octree:
         self.divided = True
 
     def insert(self, x, y, z):
-        
         if not (self.boundary_min.x <= x <= self.boundary_max.x and
                 self.boundary_min.y <= y <= self.boundary_max.y and
                 self.boundary_min.z <= z <= self.boundary_max.z):
             return False
 
-        
         if not self.divided and len(self.points) < self.capacity:
             self.points.append(Point(x, y, z))
             return True
 
-        
         if not self.divided:
             self.subdivide()
-            
             for p in self.points:
-                for child in self.children:
-                    if child.insert(p.x, p.y, p.z):
-                        break
+                idx = self.get_child_index(p.x, p.y, p.z)
+                self.children[idx].insert(p.x, p.y, p.z)
             self.points = []  
 
-        
-        for child in self.children:
-            if child.insert(x, y, z):
-                return True
+        idx = self.get_child_index(x, y, z)
+        return self.children[idx].insert(x, y, z)
 
-        return False
+    def get_child_index(self, x, y, z):
+        midx = (self.boundary_min.x + self.boundary_max.x) / 2
+        midy = (self.boundary_min.y + self.boundary_max.y) / 2
+        midz = (self.boundary_min.z + self.boundary_max.z) / 2
+
+        if x <= midx:
+            if y <= midy:
+                if z <= midz:
+                    return 0  
+                else:
+                    return 4 
+            else:
+                if z <= midz:
+                    return 3 
+                else:
+                    return 7  
+        else:
+            if y <= midy:
+                if z <= midz:
+                    return 1  
+                else:
+                    return 5  
+            else:
+                if z <= midz:
+                    return 2  
+                else:
+                    return 6  
     
     def search(self, x, y, z):
         
@@ -338,7 +357,7 @@ class OctreeApp(ShowBase):
         if not node.divided:
             self.draw_cube((node.boundary_min.x, node.boundary_min.y, node.boundary_min.z),
                            (node.boundary_max.x, node.boundary_max.y, node.boundary_max.z))
-            print(node.points)
+            #print(node.points)
             for point in node.points:
                 self.draw_sphere((point.x, point.y, point.z))
         else:
