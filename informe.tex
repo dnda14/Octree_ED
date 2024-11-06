@@ -58,5 +58,54 @@ Los octrees son ampliamente utilizados en:
 \subsection{Search}
 
 \subsection{Insert}
+A continuación, se presenta el algoritmo para insertar un punto \(P(x, y, z)\) en un octree. 
+
+\begin{enumerate}
+    \item \textbf{Verificación de nodo hoja:} Si el nodo actual es una hoja y contiene menos de la capacidad máxima permitida de puntos (por ejemplo, uno o dos puntos):
+    \begin{enumerate}
+        \item Insertar el punto \(P\) en el nodo actual.
+        \item Terminar el proceso.
+    \end{enumerate}
+    \item \textbf{Subdivisión del nodo:} Si el nodo actual es una hoja y está lleno (ha alcanzado su capacidad máxima de puntos):
+    \begin{enumerate}
+        \item Subdividir el nodo en ocho hijos, cada uno representando un octante de la región.
+        \item Redistribuir los puntos existentes en el nodo entre los octantes correspondientes.
+    \end{enumerate}
+    \item \textbf{Determinación del octante:} Calcular en cuál de los ocho octantes (subregiones) debería insertarse el punto \(P\).
+    \item \textbf{Inserción recursiva:} Insertar \(P\) recursivamente en el octante correspondiente. Repetir el proceso a partir del paso 1 para el octante seleccionado.
+\end{enumerate}
+
+\subsubsection{Detalles de Inserción en los Octantes}
+
+Para determinar el octante en el cual se insertará el punto \(P(x, y, z)\) dentro de la región definida por el nodo actual, usamos las coordenadas de \(P\) en relación con el centro de la región del nodo. Sea \(C(x_c, y_c, z_c)\) el centro de la región del nodo:
+
+\begin{itemize}
+    \item Si \(x < x_c\), el punto \(P\) se encuentra en la mitad izquierda en el eje \(x\); de lo contrario, está en la mitad derecha.
+    \item Si \(y < y_c\), el punto \(P\) se encuentra en la mitad inferior en el eje \(y\); de lo contrario, está en la mitad superior.
+    \item Si \(z < z_c\), el punto \(P\) se encuentra en la mitad delantera en el eje \(z\); de lo contrario, está en la mitad trasera.
+\end{itemize}
+
+Usando estas comparaciones, determinamos el octante específico al que pertenece el punto, de acuerdo con el siguiente cuadro:
+
+\begin{center}
+    \begin{tabular}{c|c|c|c}
+        Octante & Eje \(x\) & Eje \(y\) & Eje \(z\) \\
+        \hline
+        1 & \(x < x_c\) & \(y < y_c\) & \(z < z_c\) \\
+        2 & \(x < x_c\) & \(y < y_c\) & \(z \geq z_c\) \\
+        3 & \(x < x_c\) & \(y \geq y_c\) & \(z < z_c\) \\
+        4 & \(x < x_c\) & \(y \geq y_c\) & \(z \geq z_c\) \\
+        5 & \(x \geq x_c\) & \(y < y_c\) & \(z < z_c\) \\
+        6 & \(x \geq x_c\) & \(y < y_c\) & \(z \geq z_c\) \\
+        7 & \(x \geq x_c\) & \(y \geq y_c\) & \(z < z_c\) \\
+        8 & \(x \geq x_c\) & \(y \geq y_c\) & \(z \geq z_c\) \\
+    \end{tabular}
+\end{center}
+
+\subsubsection{Complejidad Temporal}
+
+En el caso promedio, la inserción de un punto en un octree tiene una complejidad temporal de \(O(\log N)\), donde \(N\) es el número de puntos ya presentes en el octree. Esta complejidad se debe a que el espacio se divide de manera exponencial a medida que el árbol crece en profundidad, permitiendo localizar la región correcta en una cantidad logarítmica de pasos en promedio.
+
+
 \subsection{Delete}
 \end{document}
